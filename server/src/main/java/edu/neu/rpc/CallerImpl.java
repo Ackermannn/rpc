@@ -6,7 +6,7 @@ package edu.neu.rpc;
  * @author DownUpZ
  */
 public class CallerImpl implements Caller{
-    CallerImpl(){
+    public CallerImpl(){
 
     }
     @Override
@@ -20,5 +20,10 @@ public class CallerImpl implements Caller{
         rpcResult.setName(param);
         rpcResult.setAge(12);
         return rpcResult;
+    }
+
+    @Override
+    public Integer add(Integer a, Integer b) {
+        return a + b;
     }
 }

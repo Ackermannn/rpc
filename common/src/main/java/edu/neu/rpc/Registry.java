@@ -11,6 +11,7 @@ import java.util.Map;
  * @author DownUpZ
  */
 @Slf4j
+public
 class Registry {
     private static final Map<String, Class<?>> MAP =  new HashMap<>(16);
 

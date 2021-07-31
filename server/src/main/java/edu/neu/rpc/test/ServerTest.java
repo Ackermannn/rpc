@@ -1,4 +1,7 @@
-package edu.neu.rpc;
+package edu.neu.rpc.test;
+
+import edu.neu.rpc.*;
+
 /**
  * create time: 2021/7/30 下午 8:55
  *
@@ -10,7 +13,7 @@ public class ServerTest {
         Registry registry = new Registry();
         registry.register(caller);
 
-        RpcServer rs = new RpcServer(registry);
+        RpcServer rs = new RpcServerSocketImpl(registry);
         rs.start(10086);
     }
 }

@@ -1,5 +1,8 @@
-package edu.neu.rpc;
+package edu.neu.rpc.test;
 
+import edu.neu.rpc.Caller;
+import edu.neu.rpc.RpcClientProxy;
+import edu.neu.rpc.RpcResult;
 import lombok.extern.slf4j.Slf4j;
 
 import java.io.*;
@@ -19,6 +22,7 @@ public class ClientTest {
         RpcClientProxy proxy = new RpcClientProxy("127.0.0.1", 10086);
         Caller caller = proxy.getProxy(Caller.class);
 
+
         log.info("客户端开始执行 hello 函数");
         String ret = caller.hello("123");
         log.info("客户端收到: {}", ret);
@@ -28,4 +32,6 @@ public class ClientTest {
         log.info("客户端收到: {}", ret2);
 
     }
+
 }
+

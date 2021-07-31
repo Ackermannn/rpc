@@ -11,6 +11,14 @@ public class CallerImpl implements Caller{
     }
     @Override
     public String hello(String param) {
-        return "我是服务器上的CallerImpl类下的hello方法, 方法执行的参数是" + param;
+        return "我是服务器上CallerImpl类下的hello方法, 方法执行的参数是" + param;
+    }
+
+    @Override
+    public RpcResult getRpcResult(String param) {
+        RpcResult rpcResult = new RpcResult();
+        rpcResult.setName(param);
+        rpcResult.setAge(12);
+        return rpcResult;
     }
 }

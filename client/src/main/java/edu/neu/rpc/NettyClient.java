@@ -36,8 +36,10 @@ public class NettyClient {
                     protected void initChannel(SocketChannel ch) throws Exception {
                         //添加客户端通道的处理器
                         ChannelPipeline pipeline = ch.pipeline();
-                        pipeline.addLast(new ObjectDecoder(ClassResolvers.weakCachingConcurrentResolver(null)));
-                        pipeline.addLast(new ObjectEncoder());
+//                        pipeline.addLast(new ObjectDecoder(ClassResolvers.weakCachingConcurrentResolver(null)));
+                        pipeline.addLast(new CommonDecoder());
+//                        pipeline.addLast(new ObjectEncoder());
+                        pipeline.addLast(new CommonEncoder(new JsonSerializer()));
                         pipeline.addLast(new MyClientHandler());
                     }
                 });

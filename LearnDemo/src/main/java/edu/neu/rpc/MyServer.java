@@ -5,27 +5,23 @@ import io.netty.channel.*;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
+import io.netty.handler.codec.serialization.ClassResolver;
 import io.netty.handler.codec.serialization.ClassResolvers;
 import io.netty.handler.codec.serialization.ObjectDecoder;
 import io.netty.handler.codec.serialization.ObjectEncoder;
-import lombok.extern.slf4j.Slf4j;
 
 /**
- * create time: 2021/7/31 下午 2:09
+ * create time: 2021/7/31 下午 12:51
  *
  * @author DownUpZ
- */
-@Slf4j
-public class RpcServerNettyImpl implements RpcServer{
-    private Registry registry;
-
-    public RpcServerNettyImpl(Registry registry) {
-        this.registry = registry;
-    }
-
-
-    @Override
-    public void start(int port) {
+ *//*
+作者：阿里云云栖号
+        链接：https://zhuanlan.zhihu.com/p/181239748
+        来源：知乎
+        著作权归作者所有。商业转载请联系作者获得授权，非商业转载请注明出处。
+*/
+public class MyServer {
+    public static void main(String[] args) throws Exception {
         //创建两个线程组 boosGroup、workerGroup
         EventLoopGroup bossGroup = new NioEventLoopGroup();
         EventLoopGroup workerGroup = new NioEventLoopGroup();
@@ -46,23 +42,17 @@ public class RpcServerNettyImpl implements RpcServer{
                         protected void initChannel(SocketChannel ch) throws Exception {
                             //给pipeline管道设置处理器
                             ChannelPipeline pipeline = ch.pipeline();
-//                            pipeline.addLast(new ObjectEncoder());
-                            pipeline.addLast(new CommonEncoder(new JsonSerializer()));
-//                            pipeline.addLast(new ObjectDecoder(ClassResolvers.weakCachingConcurrentResolver(null)));
-                            pipeline.addLast(new CommonDecoder());
-                            pipeline.addLast(new NettyServerHandler(registry));
+                            pipeline.addLast(new ObjectDecoder(ClassResolvers.weakCachingConcurrentResolver(null)));
+                            pipeline.addLast(new ObjectEncoder());
+                            pipeline.addLast(new MyServerHandler());
                         }
                     });//给workerGroup的EventLoop对应的管道设置处理器
-            log.info("Netty服务端已经准备就绪...");
+            System.out.println("java技术爱好者的服务端已经准备就绪...");
             //绑定端口号，启动服务端
-            ChannelFuture channelFuture = bootstrap.bind(port).sync();
-
+            ChannelFuture channelFuture = bootstrap.bind(6666).sync();
             //对关闭通道进行监听
             channelFuture.channel().closeFuture().sync();
-        }catch (Exception e){
-            e.printStackTrace();
-        }
-        finally {
+        } finally {
             bossGroup.shutdownGracefully();
             workerGroup.shutdownGracefully();
         }

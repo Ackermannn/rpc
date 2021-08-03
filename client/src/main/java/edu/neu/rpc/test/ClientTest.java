@@ -1,6 +1,6 @@
 package edu.neu.rpc.test;
 
-import edu.neu.rpc.Caller;
+import edu.neu.rpc.api.Caller;
 import edu.neu.rpc.RpcClientProxy;
 import edu.neu.rpc.RpcResult;
 import lombok.extern.slf4j.Slf4j;

@@ -12,34 +12,39 @@ import java.util.concurrent.*;
  * @author DownUpZ
  */
 @Slf4j
-public class RpcServerSocketImpl implements RpcServer {
+public class SocketServer extends AbstractRpcServer{
     private static final int CORE_POOL_SIZE = 5;
     private static final int MAXIMUM_POOL_SIZE = 50;
     private static final int KEEP_ALIVE_TIME = 60;
     private static final int BLOCKING_QUEUE_CAPACITY = 100;
-    private Registry registry;
+    private ServiceProviderImpl serviceProviderImpl;
 
-    public RpcServerSocketImpl(Registry registry) {
-        this.registry = registry;
+    public SocketServer(String host, int port) {
+        super(host, port);
     }
 
+//    public SocketServer(ServiceProviderImpl serviceProviderImpl) {
+//        this.serviceProviderImpl = serviceProviderImpl;
+//    }
+
     @Override
-    public void start(int port) {
+    public void start() {
         try {
             log.info("服务启动....");
-            ServerSocket serverSocket = new ServerSocket(port);
+            ServerSocket serverSocket = new ServerSocket(this.port);
             Socket socket;
             BlockingQueue<Runnable> workingQueue = new ArrayBlockingQueue<>(BLOCKING_QUEUE_CAPACITY);
             ThreadFactory threadFactory = Executors.defaultThreadFactory();
             ThreadPoolExecutor threadPool = new ThreadPoolExecutor(CORE_POOL_SIZE, MAXIMUM_POOL_SIZE, KEEP_ALIVE_TIME, TimeUnit.SECONDS, workingQueue, threadFactory);
             while ((socket = serverSocket.accept()) != null) {
                 log.info("消费者连接: " + socket.getInetAddress() + ":" + socket.getPort());
-                threadPool.execute(new ServerThread(socket, registry));
+                threadPool.execute(new ServerThread(socket, serviceProviderImpl));
             }
         } catch (Exception e) {
             e.printStackTrace();
         }
 
     }
+
 }
 

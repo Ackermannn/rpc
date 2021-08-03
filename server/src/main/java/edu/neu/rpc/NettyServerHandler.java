@@ -1,7 +1,6 @@
 package edu.neu.rpc;
 
 import io.netty.channel.ChannelHandlerContext;
-import io.netty.channel.ChannelInboundHandlerAdapter;
 import io.netty.channel.SimpleChannelInboundHandler;
 import lombok.extern.slf4j.Slf4j;
 
@@ -14,17 +13,17 @@ import java.lang.reflect.Method;
  */
 @Slf4j
 public class NettyServerHandler extends SimpleChannelInboundHandler<RpcRequest> {
-    private Registry registry;
+    private ServiceProviderImpl serviceProviderImpl;
 
-    NettyServerHandler(Registry registry) {
-        this.registry = registry;
+    NettyServerHandler(ServiceProviderImpl serviceProviderImpl) {
+        this.serviceProviderImpl = serviceProviderImpl;
     }
 
     @Override
     protected void channelRead0(ChannelHandlerContext ctx, RpcRequest msg) {
         try {
             log.info("收到客户端" + ctx.channel().remoteAddress() + "发送的消息：" + msg.toString());
-            Class<?> aClass = registry.getRegistry(msg.getInterfaceName());
+            Class<?> aClass = serviceProviderImpl.getServiceProvider(Class.forName(msg.getInterfaceName()));
             Object o = aClass.newInstance();
             Method method = aClass.getDeclaredMethod(msg.getMethodName(), msg.getParamTypes());
             Object result = method.invoke(o, msg.getParameters());

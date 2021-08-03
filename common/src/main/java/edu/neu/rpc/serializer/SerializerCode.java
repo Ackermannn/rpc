@@ -1,4 +1,4 @@
-package edu.neu.rpc;
+package edu.neu.rpc.serializer;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

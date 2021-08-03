@@ -1,6 +1,7 @@
 package edu.neu.rpc;
 
-import java.io.IOException;
+import edu.neu.rpc.api.Caller;
+
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.lang.reflect.InvocationHandler;

@@ -1,11 +1,14 @@
-package edu.neu.rpc;
+package edu.neu.rpc.api;
+
+import edu.neu.rpc.RpcResult;
+import edu.neu.rpc.api.Caller;
 
 /**
  * create time: 2021/7/30 下午 9:29
  *
  * @author DownUpZ
  */
-public class CallerImpl implements Caller{
+public class CallerImpl implements Caller {
     public CallerImpl(){
 
     }

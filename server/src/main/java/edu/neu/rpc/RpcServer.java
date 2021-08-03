@@ -4,5 +4,6 @@ package edu.neu.rpc;
  *
  */
 public interface RpcServer {
-    void start(int port);
+    void start();
+    void publishService(Class<?> service,  Class<?> serviceClass);
 }

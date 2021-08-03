@@ -15,11 +15,11 @@ import java.net.Socket;
 @Slf4j
 class ServerThread implements Runnable {
     Socket socket;
-    private Registry registry;
+    private ServiceProviderImpl serviceProviderImpl;
 
-    public ServerThread(Socket socket, Registry registry) {
+    public ServerThread(Socket socket, ServiceProviderImpl serviceProviderImpl) {
         this.socket = socket;
-        this.registry = registry;
+        this.serviceProviderImpl = serviceProviderImpl;
     }
 
     @Override
@@ -30,7 +30,7 @@ class ServerThread implements Runnable {
             log.info("接收到: " + rpcRequest.toString()); // 打印输入信息
 
 
-            Class<?> aClass = registry.getRegistry(rpcRequest.getInterfaceName());
+            Class<?> aClass = serviceProviderImpl.getServiceProvider(rpcRequest.getInterfaceName().getClass());
             Object o = aClass.newInstance();
             Method method = aClass.getDeclaredMethod(rpcRequest.getMethodName(), rpcRequest.getParamTypes());
             Object o1 = method.invoke(o, rpcRequest.getParameters());

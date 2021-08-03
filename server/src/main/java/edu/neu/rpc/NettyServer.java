@@ -1,13 +1,11 @@
 package edu.neu.rpc;
 
+import edu.neu.rpc.serializer.KryoSerializer;
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.*;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
-import io.netty.handler.codec.serialization.ClassResolvers;
-import io.netty.handler.codec.serialization.ObjectDecoder;
-import io.netty.handler.codec.serialization.ObjectEncoder;
 import lombok.extern.slf4j.Slf4j;
 
 /**
@@ -16,16 +14,14 @@ import lombok.extern.slf4j.Slf4j;
  * @author DownUpZ
  */
 @Slf4j
-public class RpcServerNettyImpl implements RpcServer{
-    private Registry registry;
+public class NettyServer extends AbstractRpcServer{
 
-    public RpcServerNettyImpl(Registry registry) {
-        this.registry = registry;
+    public NettyServer(String host, int port) {
+        super(host, port);
     }
 
-
     @Override
-    public void start(int port) {
+    public void start() {
         //创建两个线程组 boosGroup、workerGroup
         EventLoopGroup bossGroup = new NioEventLoopGroup();
         EventLoopGroup workerGroup = new NioEventLoopGroup();
@@ -47,15 +43,15 @@ public class RpcServerNettyImpl implements RpcServer{
                             //给pipeline管道设置处理器
                             ChannelPipeline pipeline = ch.pipeline();
 //                            pipeline.addLast(new ObjectEncoder());
-                            pipeline.addLast(new CommonEncoder(new JsonSerializer()));
+                            pipeline.addLast(new CommonEncoder(new KryoSerializer()));
 //                            pipeline.addLast(new ObjectDecoder(ClassResolvers.weakCachingConcurrentResolver(null)));
                             pipeline.addLast(new CommonDecoder());
-                            pipeline.addLast(new NettyServerHandler(registry));
+                            pipeline.addLast(new NettyServerHandler(serviceProviderImpl));
                         }
                     });//给workerGroup的EventLoop对应的管道设置处理器
-            log.info("Netty服务端已经准备就绪...");
+            log.info("Netty服务端已经准备就绪..., 端口号:" + port);
             //绑定端口号，启动服务端
-            ChannelFuture channelFuture = bootstrap.bind(port).sync();
+            ChannelFuture channelFuture = bootstrap.bind(this.host, this.port).sync();
 
             //对关闭通道进行监听
             channelFuture.channel().closeFuture().sync();
@@ -67,4 +63,5 @@ public class RpcServerNettyImpl implements RpcServer{
             workerGroup.shutdownGracefully();
         }
     }
+
 }

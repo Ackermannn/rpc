@@ -1,5 +1,7 @@
 package edu.neu.rpc;
 
+import edu.neu.rpc.serializer.JsonSerializer;
+
 public interface CommonSerializer {
 
     byte[] serialize(Object obj);
@@ -8,7 +10,7 @@ public interface CommonSerializer {
 
     int getCode();
 
-    static CommonSerializer getByCode(int code) {
+    static edu.neu.rpc.serializer.CommonSerializer getByCode(int code) {
         switch (code) {
             case 1:
                 return new JsonSerializer();

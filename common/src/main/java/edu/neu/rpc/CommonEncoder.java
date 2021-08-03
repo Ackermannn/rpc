@@ -1,5 +1,6 @@
 package edu.neu.rpc;
 
+import edu.neu.rpc.serializer.CommonSerializer;
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.MessageToByteEncoder;

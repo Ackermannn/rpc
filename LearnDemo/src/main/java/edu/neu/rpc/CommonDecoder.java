@@ -1,5 +1,6 @@
 package edu.neu.rpc;
 
+import edu.neu.rpc.serializer.CommonSerializer;
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.ReplayingDecoder;
@@ -35,7 +36,7 @@ public class CommonDecoder extends ReplayingDecoder {
             throw new Exception();
         }
         int serializerCode = in.readInt();
-        CommonSerializer serializer = CommonSerializer.getByCode(serializerCode);
+        edu.neu.rpc.serializer.CommonSerializer serializer = CommonSerializer.getByCode(serializerCode);
         if(serializer == null) {
             log.error("不识别的反序列化器: {}", serializerCode);
             throw new Exception();

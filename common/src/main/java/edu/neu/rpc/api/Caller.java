@@ -1,5 +1,7 @@
-package edu.neu.rpc;
+package edu.neu.rpc.api;
 
+
+import edu.neu.rpc.RpcResult;
 
 public interface Caller {
     String hello(String param);

@@ -1,6 +1,8 @@
 package edu.neu.rpc.test;
 
 import edu.neu.rpc.*;
+import edu.neu.rpc.api.Caller;
+import edu.neu.rpc.api.CallerImpl;
 
 /**
  * create time: 2021/7/30 下午 8:55
@@ -9,11 +11,9 @@ import edu.neu.rpc.*;
  */
 public class ServerTest {
     public static void main(String[] args) {
-        Caller caller = new CallerImpl();
-        Registry registry = new Registry();
-        registry.register(caller);
 
-        RpcServer rs = new RpcServerSocketImpl(registry);
-        rs.start(10086);
+        RpcServer rs = new SocketServer("127.0.0.1", 10086);
+        rs.publishService(Caller.class, CallerImpl.class);
+        rs.start();
     }
 }

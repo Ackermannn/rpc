@@ -1,15 +1,18 @@
 package edu.neu.rpc;
 
+import edu.neu.rpc.registry.NacosServiceRegistry;
+import edu.neu.rpc.registry.ServiceRegistry;
+import edu.neu.rpc.serializer.JsonSerializer;
+import edu.neu.rpc.serializer.KryoSerializer;
 import io.netty.bootstrap.Bootstrap;
 import io.netty.channel.*;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioSocketChannel;
-import io.netty.handler.codec.serialization.ClassResolvers;
-import io.netty.handler.codec.serialization.ObjectDecoder;
-import io.netty.handler.codec.serialization.ObjectEncoder;
 import io.netty.util.AttributeKey;
 import lombok.extern.slf4j.Slf4j;
+
+import java.net.InetSocketAddress;
 
 
 /**
@@ -19,9 +22,9 @@ import lombok.extern.slf4j.Slf4j;
  */
 @Slf4j
 public class NettyClient {
-    private final String host;
-    private final int port;
+
     private static final Bootstrap BOOTSTRAP;
+    private ServiceRegistry serviceRegistry;
 
     static {
         NioEventLoopGroup group = new NioEventLoopGroup();
@@ -39,21 +42,28 @@ public class NettyClient {
 //                        pipeline.addLast(new ObjectDecoder(ClassResolvers.weakCachingConcurrentResolver(null)));
                         pipeline.addLast(new CommonDecoder());
 //                        pipeline.addLast(new ObjectEncoder());
-                        pipeline.addLast(new CommonEncoder(new JsonSerializer()));
+                        pipeline.addLast(new CommonEncoder(new KryoSerializer()));
                         pipeline.addLast(new MyClientHandler());
                     }
                 });
         log.info("客户端 bootstrap 准备就绪，随时可以起飞~");
     }
 
-    public NettyClient(String host, int port) {
-        this.host = host;
-        this.port = port;
+    public NettyClient() {
+
     }
+
+
 
 
     public RpcResponse<Object> send(RpcRequest rpcRequest) {
         try {
+
+            serviceRegistry = new NacosServiceRegistry();
+            InetSocketAddress inetSocketAddress = serviceRegistry.lookupService(rpcRequest.getInterfaceName());
+            String host = inetSocketAddress.getHostName();
+            int port = inetSocketAddress.getPort();
+
             ChannelFuture future = BOOTSTRAP.connect(host, port).sync();
             log.info("客户端连接到服务器 {}:{}", host, port);
             Channel channel = future.channel();

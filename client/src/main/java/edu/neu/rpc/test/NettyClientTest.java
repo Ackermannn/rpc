@@ -1,6 +1,7 @@
 package edu.neu.rpc.test;
 
 import edu.neu.rpc.*;
+import edu.neu.rpc.api.Caller;
 import lombok.extern.slf4j.Slf4j;
 
 /**
@@ -14,10 +15,10 @@ public class NettyClientTest {
 
     public static void main(String[] args) {
         //客户端
-        NettyClientProxy proxy = new NettyClientProxy(new NettyClient("127.0.0.1", 10086));
+        NettyClientProxy proxy = new NettyClientProxy(new NettyClient());
         Caller caller = proxy.getProxy(Caller.class);
         Integer ret;
-        for (i = 0; i < 2; i++) {
+        for (i = 0; i < 1; i++) {
             new Thread(() -> {
                 log.info("Client Get: {} + {} = {}", i, i, caller.add(i, i));
             }).start();

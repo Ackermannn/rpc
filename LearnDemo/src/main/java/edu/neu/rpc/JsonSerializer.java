@@ -1,6 +1,7 @@
 package edu.neu.rpc;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import edu.neu.rpc.serializer.CommonSerializer;
 import lombok.extern.slf4j.Slf4j;
 
 import java.io.IOException;

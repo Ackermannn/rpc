@@ -1,7 +1,8 @@
-package edu.neu.rpc;
+package edu.neu.rpc.serializer;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import edu.neu.rpc.RpcRequest;
 import lombok.extern.slf4j.Slf4j;
 
 import java.io.IOException;

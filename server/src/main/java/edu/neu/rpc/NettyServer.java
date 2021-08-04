@@ -22,6 +22,7 @@ public class NettyServer extends AbstractRpcServer{
 
     @Override
     public void start() {
+
         //创建两个线程组 boosGroup、workerGroup
         EventLoopGroup bossGroup = new NioEventLoopGroup();
         EventLoopGroup workerGroup = new NioEventLoopGroup();
@@ -52,6 +53,9 @@ public class NettyServer extends AbstractRpcServer{
             log.info("Netty服务端已经准备就绪..., 端口号:" + port);
             //绑定端口号，启动服务端
             ChannelFuture channelFuture = bootstrap.bind(this.host, this.port).sync();
+
+            // 创建钩子进程当服务器关闭时注销注册
+            serviceRegistry.clearRegistry();
 
             //对关闭通道进行监听
             channelFuture.channel().closeFuture().sync();

@@ -2,7 +2,6 @@ package edu.neu.rpc;
 
 import edu.neu.rpc.registry.NacosServiceRegistry;
 import edu.neu.rpc.registry.ServiceRegistry;
-import edu.neu.rpc.serializer.JsonSerializer;
 import edu.neu.rpc.serializer.KryoSerializer;
 import io.netty.bootstrap.Bootstrap;
 import io.netty.channel.*;
@@ -24,7 +23,7 @@ import java.net.InetSocketAddress;
 public class NettyClient {
 
     private static final Bootstrap BOOTSTRAP;
-    private ServiceRegistry serviceRegistry;
+    private final ServiceRegistry serviceRegistry = new NacosServiceRegistry();;
 
     static {
         NioEventLoopGroup group = new NioEventLoopGroup();
@@ -54,12 +53,10 @@ public class NettyClient {
     }
 
 
-
-
     public RpcResponse<Object> send(RpcRequest rpcRequest) {
         try {
 
-            serviceRegistry = new NacosServiceRegistry();
+
             InetSocketAddress inetSocketAddress = serviceRegistry.lookupService(rpcRequest.getInterfaceName());
             String host = inetSocketAddress.getHostName();
             int port = inetSocketAddress.getPort();

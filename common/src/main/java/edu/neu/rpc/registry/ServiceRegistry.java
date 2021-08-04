@@ -21,4 +21,7 @@ public interface ServiceRegistry {
      * @return
      */
     InetSocketAddress lookupService(String serviceName);
+
+
+    void clearRegistry();
 }

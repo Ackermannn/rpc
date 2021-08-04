@@ -16,12 +16,12 @@ public class ServiceProviderImpl implements ServiceProvider {
     private static final Map<Class<?>, Class<?>> MAP = new ConcurrentHashMap<>(16);
 
     /**
-     * @param serviceName      接口名 服务名
-     * @param service 具体的执行类
-
+     * @param serviceName 接口名 服务名
+     * @param service     具体的执行类
      */
     @Override
     public void addServiceProvider(Class<?> serviceName, Class<?> service) {
+        log.info("服务端容器添加了服务{}的具体执行{}", serviceName.getCanonicalName(), service.getCanonicalName());
         MAP.put(serviceName, service);
     }
 

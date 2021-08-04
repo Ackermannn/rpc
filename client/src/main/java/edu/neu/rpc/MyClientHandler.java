@@ -12,8 +12,6 @@ import lombok.extern.slf4j.Slf4j;
 public class MyClientHandler extends SimpleChannelInboundHandler<RpcResponse> {
     /**
      * 客户端接受到的信息存放到 ctx.channel().attr(key).set(msg);
-     * @param ctx
-     * @param msg
      */
     @Override
     protected void channelRead0(ChannelHandlerContext ctx, RpcResponse msg)  {

@@ -23,7 +23,7 @@ import java.net.InetSocketAddress;
 public class NettyClient {
 
     private static final Bootstrap BOOTSTRAP;
-    private final ServiceRegistry serviceRegistry = new NacosServiceRegistry();;
+    private final ServiceRegistry serviceRegistry = new NacosServiceRegistry();
 
     static {
         NioEventLoopGroup group = new NioEventLoopGroup();
@@ -35,7 +35,7 @@ public class NettyClient {
                 //使用匿名内部类初始化通道
                 .handler(new ChannelInitializer<SocketChannel>() {
                     @Override
-                    protected void initChannel(SocketChannel ch) throws Exception {
+                    protected void initChannel(SocketChannel ch) {
                         //添加客户端通道的处理器
                         ChannelPipeline pipeline = ch.pipeline();
 //                        pipeline.addLast(new ObjectDecoder(ClassResolvers.weakCachingConcurrentResolver(null)));
@@ -66,7 +66,7 @@ public class NettyClient {
             Channel channel = future.channel();
             channel.writeAndFlush(rpcRequest).addListener(future1 -> {
                 if (future1.isSuccess()) {
-                    log.info(String.format("客户端发送消息: %s", rpcRequest.toString()));
+                    log.info(String.format("客户端发送消息: %s", rpcRequest));
                 } else {
                     log.error("发送消息时有错误发生: ", future1.cause());
                 }

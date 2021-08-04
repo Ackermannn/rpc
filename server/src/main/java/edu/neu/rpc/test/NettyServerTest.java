@@ -1,22 +1,19 @@
 package edu.neu.rpc.test;
 
-import edu.neu.rpc.*;
-import edu.neu.rpc.api.Caller;
-import edu.neu.rpc.api.CallerImpl;
+import edu.neu.rpc.NettyServer;
+import edu.neu.rpc.RpcServer;
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * create time: 2021/7/31 下午 3:47
  *
  * @author DownUpZ
  */
+@Slf4j
 public class NettyServerTest {
-    static final int DEFAULT_PORT = 10086;
 
     public static void main(String[] args) {
-
-        RpcServer rs = new NettyServer("127.0.01", DEFAULT_PORT);
-
-        rs.publishService(Caller.class, CallerImpl.class);
+        RpcServer rs = new NettyServer("127.0.01", 10086);
         rs.start();
 
     }

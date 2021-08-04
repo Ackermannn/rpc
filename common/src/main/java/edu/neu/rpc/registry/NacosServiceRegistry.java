@@ -4,10 +4,10 @@ import com.alibaba.nacos.api.exception.NacosException;
 import com.alibaba.nacos.api.naming.NamingFactory;
 import com.alibaba.nacos.api.naming.NamingService;
 import com.alibaba.nacos.api.naming.pojo.Instance;
-import edu.neu.rpc.loadbalancer.LoadBalancer;
-import edu.neu.rpc.loadbalancer.RandomLoadBalancer;
+import edu.neu.rpc.ConfigureParse;
 import edu.neu.rpc.exceptions.RpcError;
 import edu.neu.rpc.exceptions.RpcException;
+import edu.neu.rpc.loadbalancer.LoadBalancer;
 import lombok.extern.slf4j.Slf4j;
 
 import java.net.InetSocketAddress;
@@ -23,24 +23,36 @@ import java.util.Set;
 @Slf4j
 public class NacosServiceRegistry implements ServiceRegistry {
 
-    private String SERVER_ADDR;
-    private NamingService namingService;
     private String host;
     private int port;
-    private LoadBalancer loadBalancer = new RandomLoadBalancer(); // 默认随机
-    private final Set<String> serviceName = new HashSet<>(); // 记录注册过的服务
+    private final NamingService namingService;
+    private LoadBalancer loadBalancer;
+
+    /**
+     * 记录注册过的服务
+     */
+    private final Set<String> serviceName = new HashSet<>();
 
     public NacosServiceRegistry() {
-        SERVER_ADDR = "127.0.0.1:8848";
-        log.info("链接默认的Nacos注册: " + SERVER_ADDR);
-        createNamingService();
-    }
+        String configName = ConfigureParse.parseLoadBalancer();
+        try {
+            Class<?> clazz = Class.forName("edu.neu.rpc.loadbalancer." + configName);
+            loadBalancer = (LoadBalancer) clazz.newInstance();
+        } catch (ClassNotFoundException | InstantiationException | IllegalAccessException e) {
+            e.printStackTrace();
+        }
 
-    public NacosServiceRegistry(String serverAddress) {
-        SERVER_ADDR = serverAddress;
-        createNamingService();
-    }
+        // 注册中心的地址与端口
+        String serverAdder = ConfigureParse.parseRegistryServerAdder();
+        log.info("链接默认的Nacos注册: " + serverAdder);
 
+        try {
+            namingService = NamingFactory.createNamingService(serverAdder);
+        } catch (NacosException e) {
+            log.error("连接到Nacos时有错误发生: ", e);
+            throw new RpcException(RpcError.FAILED_TO_CONNECT_TO_SERVICE_REGISTRY);
+        }
+    }
 
     /**
      * 清理注册中心
@@ -61,21 +73,12 @@ public class NacosServiceRegistry implements ServiceRegistry {
                     log.info("注销服务 {} 成功", serviceName);
                 } catch (NacosException e) {
                     log.error("注销服务 {} 失败", serviceName, e);
-//                    e.printStackTrace();
                 }
             }
         }
         Runtime.getRuntime().addShutdownHook(new CloseThread());
     }
 
-    private void createNamingService() {
-        try {
-            namingService = NamingFactory.createNamingService(SERVER_ADDR);
-        } catch (NacosException e) {
-            log.error("连接到Nacos时有错误发生: ", e);
-            throw new RpcException(RpcError.FAILED_TO_CONNECT_TO_SERVICE_REGISTRY);
-        }
-    }
 
     @Override
     public void register(String serviceName, InetSocketAddress inetSocketAddress) {
@@ -111,13 +114,4 @@ public class NacosServiceRegistry implements ServiceRegistry {
         return null;
     }
 
-    public LoadBalancer getLoadBalancer() {
-        log.info("采用 {} 负载均衡策略", loadBalancer.getClass().getCanonicalName());
-        return loadBalancer;
-    }
-
-    public void setLoadBalancer(LoadBalancer loadBalancer) {
-        log.info("采用 {} 负载均衡策略", loadBalancer.getClass().getCanonicalName());
-        this.loadBalancer = loadBalancer;
-    }
 }

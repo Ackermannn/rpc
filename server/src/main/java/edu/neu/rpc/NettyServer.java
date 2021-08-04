@@ -38,25 +38,22 @@ public class NettyServer extends AbstractRpcServer{
                     //设置保持活动连接状态
                     .childOption(ChannelOption.SO_KEEPALIVE, true)
                     //使用匿名内部类的形式初始化通道对象
+                    // 给workerGroup的EventLoop对应的管道设置处理器
                     .childHandler(new ChannelInitializer<SocketChannel>() {
                         @Override
-                        protected void initChannel(SocketChannel ch) throws Exception {
+                        protected void initChannel(SocketChannel ch) {
                             //给pipeline管道设置处理器
                             ChannelPipeline pipeline = ch.pipeline();
-//                            pipeline.addLast(new ObjectEncoder());
+                            // pipeline.addLast(new ObjectEncoder());
                             pipeline.addLast(new CommonEncoder(new KryoSerializer()));
-//                            pipeline.addLast(new ObjectDecoder(ClassResolvers.weakCachingConcurrentResolver(null)));
+                            // pipeline.addLast(new ObjectDecoder(ClassResolvers.weakCachingConcurrentResolver(null)));
                             pipeline.addLast(new CommonDecoder());
                             pipeline.addLast(new NettyServerHandler(serviceProviderImpl));
                         }
-                    });//给workerGroup的EventLoop对应的管道设置处理器
+                    });
             log.info("Netty服务端已经准备就绪..., 端口号:" + port);
             //绑定端口号，启动服务端
             ChannelFuture channelFuture = bootstrap.bind(this.host, this.port).sync();
-
-            // 创建钩子进程当服务器关闭时注销注册
-            serviceRegistry.clearRegistry();
-
             //对关闭通道进行监听
             channelFuture.channel().closeFuture().sync();
         }catch (Exception e){

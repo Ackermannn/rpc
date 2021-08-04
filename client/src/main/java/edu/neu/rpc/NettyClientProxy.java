@@ -1,6 +1,5 @@
 package edu.neu.rpc;
 
-import edu.neu.rpc.api.Caller;
 import lombok.extern.slf4j.Slf4j;
 
 import java.lang.reflect.InvocationHandler;
@@ -23,7 +22,7 @@ public class NettyClientProxy implements InvocationHandler {
      * Proxy类就是用来创建一个代理对象的类，它提供了很多方法，但是我们最常用的是newProxyInstance方法
      */
     @SuppressWarnings("unchecked")
-    public <T> T getProxy(Class<Caller> clazz) {
+    public <T> T getProxy(Class<T> clazz) {
         return (T) Proxy.newProxyInstance(clazz.getClassLoader(), new Class<?>[]{clazz}, this);
     }
 

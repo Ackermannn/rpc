@@ -13,7 +13,10 @@ import lombok.extern.slf4j.Slf4j;
 public class NettyServerTest {
 
     public static void main(String[] args) {
-        RpcServer rs = new NettyServer("127.0.01", 10086);
+        String host = "219.216.101.88";
+        int port = 10087;
+
+        RpcServer rs = new NettyServer(host, port);
         rs.start();
 
     }

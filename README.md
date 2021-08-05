@@ -1,6 +1,11 @@
 # rpc
 自己简单撸一撸RPC
 
+# 入口
+
+[**客户端**](client/src/main/java/edu/neu/rpc/test/NettyClientTest.java)
+
+[**服务端**](server/src/main/java/edu/neu/rpc/test/NettyServerTest.java)
 
 # nacos 
 

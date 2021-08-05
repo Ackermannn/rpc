@@ -58,7 +58,7 @@ public class NettyClient {
 
 
             InetSocketAddress inetSocketAddress = serviceRegistry.lookupService(rpcRequest.getInterfaceName());
-            String host = inetSocketAddress.getHostName();
+            String host = inetSocketAddress.getHostString();
             int port = inetSocketAddress.getPort();
 
             ChannelFuture future = BOOTSTRAP.connect(host, port).sync();

@@ -84,7 +84,7 @@ public class NacosServiceRegistry implements ServiceRegistry {
     public void register(String serviceName, InetSocketAddress inetSocketAddress) {
         try {
 
-            host = inetSocketAddress.getHostName();
+            host = inetSocketAddress.getHostString();
             port = inetSocketAddress.getPort();
             this.serviceName.add(serviceName);
             namingService.registerInstance(serviceName, host, port);
